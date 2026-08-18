@@ -26,7 +26,7 @@ export const Route = createFileRoute("/productos")({
       { title: "Productos — NOVASTYLE" },
       { name: "description", content: "Catálogo completo NOVASTYLE: hombre, mujer, niños, niñas, calzado, bolsos, joyería, accesorios y fragancias. Precios en Quetzales." },
       { property: "og:title", content: "Productos — NOVASTYLE" },
-      { property: "og:description", content: "99 productos seleccionados con moda, belleza y cuidado personal." },
+      { property: "og:description", content: "150 productos seleccionados con moda, belleza y cuidado personal." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
