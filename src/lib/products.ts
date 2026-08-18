@@ -38,8 +38,8 @@ export type Product = {
 };
 
 const categoryFallbackVisual = (label: string) => {
-  const safe = label.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c] || c));
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1125" viewBox="0 0 900 1125"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2563eb"/><stop offset=".5" stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs><rect width="900" height="1125" rx="48" fill="url(#g)"/><text x="70" y="135" fill="white" font-family="Arial,sans-serif" font-size="38" font-weight="700">NOVASTYLE</text><text x="450" y="555" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="72" font-weight="800">${safe}</text><text x="450" y="625" text-anchor="middle" fill="white" opacity=".78" font-family="Arial,sans-serif" font-size="28">Producto de catálogo</text></svg>`;
+  const safe = label.replace(/[&<>"']/g, "");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750"><rect width="100%" height="100%" fill="#f5f5f4"/><text x="50%" y="48%" text-anchor="middle" font-family="Arial" font-size="34" fill="#292524">NOVASTYLE</text><text x="50%" y="55%" text-anchor="middle" font-family="Arial" font-size="22" fill="#78716c">${safe}</text></svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
@@ -415,27 +415,8 @@ const PRODUCT_POOL: Raw[] = [...RAW, ...VARIANTS];
 const QUOTAS: Record<CategoryKey, number> = { hombre: 22, mujer: 25, ninos: 8, ninas: 8, calzado: 10, bolsos: 5, joyeria: 3, accesorios: 3, fragancias: 5, skincare: 4, cuidado: 3, maquillaje: 3 };
 const ALL_RAW: Raw[] = (Object.keys(QUOTAS) as CategoryKey[]).flatMap((category) => PRODUCT_POOL.filter((p) => p.c === category).slice(0, QUOTAS[category]));
 
-const PHOTO_QUERY: Record<CategoryKey, string> = {
-  hombre: "menswear,fashion",
-  mujer: "womenswear,fashion",
-  ninos: "boys,clothing",
-  ninas: "girls,clothing",
-  calzado: "shoes,fashion",
-  bolsos: "handbag,fashion",
-  joyeria: "jewelry,fashion",
-  accesorios: "fashion,accessories",
-  fragancias: "perfume,product",
-  skincare: "skincare,product",
-  cuidado: "personalcare,cosmetics",
-  maquillaje: "makeup,cosmetics",
-};
-
-/**
- * Una fotografía real distinta por producto. `lock` fija una imagen diferente
- * para cada ficha y evita que el catálogo recicle 2 o 3 fotos por categoría.
- */
-const uniquePhotoFor = (category: CategoryKey, idx: number) =>
-  `https://loremflickr.com/900/1125/${PHOTO_QUERY[category]}?lock=${idx + 1001}`;
+const uniquePhotoFor = (_category: CategoryKey, idx: number) =>
+  `https://picsum.photos/seed/novastyle-${idx + 1}/600/750`;
 
 
 
