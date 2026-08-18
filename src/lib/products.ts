@@ -415,80 +415,30 @@ const PRODUCT_POOL: Raw[] = [...RAW, ...VARIANTS];
 const QUOTAS: Record<CategoryKey, number> = { hombre: 22, mujer: 25, ninos: 8, ninas: 8, calzado: 10, bolsos: 5, joyeria: 3, accesorios: 3, fragancias: 5, skincare: 4, cuidado: 3, maquillaje: 3 };
 const ALL_RAW: Raw[] = (Object.keys(QUOTAS) as CategoryKey[]).flatMap((category) => PRODUCT_POOL.filter((p) => p.c === category).slice(0, QUOTAS[category]));
 
-const CATEGORY_PHOTOS: Record<CategoryKey, string[]> = {
-  hombre: [
-    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=700&q=78"
-  ],
-  mujer: [
-    "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=78"
-  ],
-  ninos: [
-    "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=700&q=78"
-  ],
-  ninas: [
-    "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=700&q=78"
-  ],
-  calzado: [
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=700&q=78"
-  ],
-  bolsos: [
-    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=78"
-  ],
-  joyeria: [
-    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=78"
-  ],
-  accesorios: [
-    "https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=700&q=78"
-  ],
-  fragancias: [
-    "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=78"
-  ],
-  skincare: [
-    "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=700&q=78"
-  ],
-  cuidado: [
-    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=700&q=78"
-  ],
-  maquillaje: [
-    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=78",
-    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=78"
-  ]
+const PHOTO_QUERY: Record<CategoryKey, string> = {
+  hombre: "menswear,fashion",
+  mujer: "womenswear,fashion",
+  ninos: "boys,clothing",
+  ninas: "girls,clothing",
+  calzado: "shoes,fashion",
+  bolsos: "handbag,fashion",
+  joyeria: "jewelry,fashion",
+  accesorios: "fashion,accessories",
+  fragancias: "perfume,product",
+  skincare: "skincare,product",
+  cuidado: "personalcare,cosmetics",
+  maquillaje: "makeup,cosmetics",
 };
 
-const categoryPhotoFor = (category: CategoryKey, idx: number) => {
-  const photos = CATEGORY_PHOTOS[category];
-  return photos[idx % photos.length];
-};
+/**
+ * Una fotografía real distinta por producto. `lock` fija una imagen diferente
+ * para cada ficha y evita que el catálogo recicle 2 o 3 fotos por categoría.
+ */
+const uniquePhotoFor = (category: CategoryKey, idx: number) =>
+  `https://loremflickr.com/900/1125/${PHOTO_QUERY[category]}?lock=${idx + 1001}`;
 
 
-const REAL_PRODUCT_PHOTOS: Record<string, string> = {
-  "Elegant Midi Dress": "https://images.pexels.com/photos/25841789/pexels-photo-25841789.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Silk Blouse Perla": "https://images.pexels.com/photos/4831692/pexels-photo-4831692.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Wide Leg Pants": "https://images.pexels.com/photos/8102501/pexels-photo-8102501.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Cropped Hoodie": "https://images.pexels.com/photos/6995869/pexels-photo-6995869.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Puffer Jacket Mujer": "https://images.pexels.com/photos/13513247/pexels-photo-13513247.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Mom Jeans Vintage": "https://images.pexels.com/photos/15576193/pexels-photo-15576193.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Falda Plisada Midi": "https://images.pexels.com/photos/17371754/pexels-photo-17371754.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Top Ribbed Basic": "https://images.pexels.com/photos/17391659/pexels-photo-17391659.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Camiseta Boxy Fit": "https://images.pexels.com/photos/31747194/pexels-photo-31747194.jpeg?auto=compress&cs=tinysrgb&w=900",
-  "Short Denim Alto": "https://images.pexels.com/photos/17371755/pexels-photo-17371755.jpeg?auto=compress&cs=tinysrgb&w=900",
-};
 
-const realPhotoFor = (name: string) => REAL_PRODUCT_PHOTOS[name];
 
 export const PRODUCTS: Product[] = ALL_RAW.map((r, idx) => ({
 
@@ -500,8 +450,8 @@ export const PRODUCTS: Product[] = ALL_RAW.map((r, idx) => ({
     ? `${r.d} Presentación de ${r.f.ml}. Familia olfativa ${r.f.family.toLowerCase()}, con notas de ${r.f.notes.toLowerCase()}. Una creación propia de NOVASTYLE, pensada para acompañar tu estilo de día y de noche.`
     : `${r.d} Confeccionada en ${r.m.toLowerCase()}, esta pieza de la línea ${r.s.toLowerCase()} de NOVASTYLE combina comodidad y diseño contemporáneo. Ideal para crear looks versátiles todos los días. Lavado recomendado a máquina en frío; no usar blanqueador.`,
   price: r.p,
-  image: realPhotoFor(r.n) ?? categoryPhotoFor(r.c, idx),
-  images: [realPhotoFor(r.n) ?? categoryPhotoFor(r.c, idx)],
+  image: uniquePhotoFor(r.c, idx),
+  images: [uniquePhotoFor(r.c, idx)],
   category: r.c,
   categoryLabel: CATEGORY_LABEL[r.c],
   type: r.t,
