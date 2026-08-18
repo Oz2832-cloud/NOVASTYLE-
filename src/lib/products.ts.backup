@@ -1,0 +1,349 @@
+export type CategoryKey =
+  | "hombre"
+  | "mujer"
+  | "ninos"
+  | "ninas"
+  | "calzado"
+  | "bolsos"
+  | "joyeria"
+  | "accesorios"
+  | "fragancias";
+
+export type ColorOption = { name: string; hex: string };
+
+export type Product = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  longDescription: string;
+  price: number;
+  image: string;
+  images: string[];
+  category: CategoryKey;
+  categoryLabel: string;
+  type: string;
+  style: string;
+  material: string;
+  availability: string;
+  colors: ColorOption[];
+  sizes: string[];
+  rating: number;
+  badge?: "Nuevo" | "Oferta" | "Más vendido";
+  fragrance?: { ml: string; family: string; notes: string };
+};
+
+const img = (id: string, w = 900) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+/**
+ * Imagen de respaldo por categoría: se usa solo si la fotografía principal
+ * del producto no carga, para que ninguna tarjeta quede en blanco.
+ */
+export const FALLBACK_IMAGE: Record<CategoryKey, string> = {
+  hombre: img("photo-1516257984-b1b4d707412e"),
+  mujer: img("photo-1485231183945-fffde7cc051e"),
+  ninos: img("photo-1503919545889-aef636e10ad4"),
+  ninas: img("photo-1518831959646-742c3a14ebf7"),
+  calzado: img("photo-1549298916-b41d501d3772"),
+  bolsos: img("photo-1548036328-c9fa89d128fa"),
+  joyeria: img("photo-1611652022419-a9419f74343d"),
+  accesorios: img("photo-1523170335258-f5ed11844a49"),
+  fragancias: img("photo-1541643600914-78b084683601"),
+};
+
+/**
+ * Cada producto muestra únicamente fotografías verificables de esa misma prenda.
+ * No se generan vistas "frontal/posterior/lateral" con fotos de otros productos.
+ */
+export const VIEW_LABELS = ["Fotografía del producto"];
+
+
+const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+const KID_SIZES = ["2A", "4A", "6A", "8A", "10A", "12A"];
+const SHOE_SIZES = ["35", "36", "37", "38", "39", "40", "41", "42", "43"];
+const KID_SHOE_SIZES = ["22", "24", "26", "28", "30", "32"];
+const ONE_SIZE = ["Única"];
+
+const C: Record<string, ColorOption> = {
+  blanco: { name: "Blanco", hex: "#f8fafc" },
+  negro: { name: "Negro", hex: "#111827" },
+  azul: { name: "Azul", hex: "#3B82F6" },
+  celeste: { name: "Celeste", hex: "#38BDF8" },
+  morado: { name: "Morado", hex: "#8B5CF6" },
+  rosa: { name: "Rosa", hex: "#EC4899" },
+  beige: { name: "Beige", hex: "#e7d8c3" },
+  verde: { name: "Verde", hex: "#10b981" },
+  gris: { name: "Gris", hex: "#9ca3af" },
+  vino: { name: "Vino", hex: "#7f1d1d" },
+  cafe: { name: "Café", hex: "#78350f" },
+  dorado: { name: "Dorado", hex: "#d4af37" },
+};
+
+const CATEGORY_LABEL: Record<CategoryKey, string> = {
+  hombre: "Hombre",
+  mujer: "Mujer",
+  ninos: "Niños",
+  ninas: "Niñas",
+  calzado: "Calzado",
+  bolsos: "Bolsos",
+  joyeria: "Joyería",
+  accesorios: "Accesorios",
+  fragancias: "Fragancias",
+};
+
+type Raw = {
+  n: string;
+  d: string;
+  p: number;
+  i: string;
+  c: CategoryKey;
+  t: string;
+  s: string;
+  m: string;
+  col: string[];
+  sz?: string[];
+  r: number;
+  b?: Product["badge"];
+  f?: { ml: string; family: string; notes: string };
+};
+
+const RAW: Raw[] = [
+  // ---------- HOMBRE ----------
+  { n: "Nova Hoodie Oversize", d: "Sudadera oversize de algodón premium con capucha forrada.", p: 349, i: "photo-1556821840-3a63f95609a7", c: "hombre", t: "Hoodies", s: "Urbano", m: "80% algodón, 20% poliéster", col: ["negro", "gris", "azul"], r: 4.8, b: "Más vendido" },
+  { n: "Urban T-Shirt", d: "Camiseta minimalista de corte relajado y tacto suave.", p: 189, i: "photo-1521572163474-6864f9cf17ab", c: "hombre", t: "Camisetas", s: "Casual", m: "100% algodón peinado", col: ["blanco", "negro", "celeste"], r: 4.6, b: "Nuevo" },
+  { n: "Denim Jacket Classic", d: "Chaqueta de mezclilla lavado clásico con botones metálicos.", p: 499, i: "photo-1591047139829-d91aecb6caea", c: "hombre", t: "Chaquetas", s: "Casual", m: "100% denim de algodón", col: ["azul", "negro"], r: 4.9, b: "Oferta" },
+  { n: "Slim Jeans Índigo", d: "Jeans slim tiro medio con elastano para mayor comodidad.", p: 379, i: "photo-1542272604-787c3835535d", c: "hombre", t: "Jeans", s: "Casual", m: "98% algodón, 2% elastano", col: ["azul", "negro", "gris"], r: 4.6 },
+  { n: "Bomber Satinada", d: "Bomber satinada estilo streetwear con puños acanalados.", p: 629, i: "photo-1551028719-00167b16eac5", c: "hombre", t: "Chaquetas", s: "Urbano", m: "Poliéster satinado", col: ["negro", "verde", "vino"], r: 4.7, b: "Nuevo" },
+  { n: "Cargo Pants Utility", d: "Pantalón cargo estilo utility con bolsillos laterales.", p: 439, i: "photo-1624378439575-d8705ad7ae80", c: "hombre", t: "Pantalones", s: "Urbano", m: "Gabardina de algodón", col: ["beige", "verde", "negro"], r: 4.5 },
+  { n: "Camisa Oxford Blanca", d: "Camisa Oxford de corte regular ideal para ocasiones formales.", p: 329, i: "photo-1602810318383-e386cc2a3ccf", c: "hombre", t: "Camisas", s: "Elegante", m: "100% algodón Oxford", col: ["blanco", "celeste"], r: 4.7 },
+  { n: "Polo Piqué NOVA", d: "Polo de piqué con logo bordado y cuello estructurado.", p: 239, i: "photo-1586790170083-2f9ceadc732d", c: "hombre", t: "Polos", s: "Casual", m: "Piqué de algodón", col: ["azul", "blanco", "vino"], r: 4.5 },
+  { n: "Jogger Tech Fleece", d: "Jogger deportivo de tejido térmico con puño elástico.", p: 359, i: "photo-1552902865-b72c031ac5ea", c: "hombre", t: "Joggers", s: "Deportivo", m: "Fleece técnico reciclado", col: ["gris", "negro", "azul"], r: 4.7, b: "Más vendido" },
+  { n: "Short Deportivo Runner", d: "Short ligero de secado rápido con bolsillo oculto.", p: 199, i: "photo-1591195853828-11db59a44f6b", c: "hombre", t: "Shorts", s: "Deportivo", m: "Poliéster técnico", col: ["negro", "azul"], r: 4.4 },
+  { n: "Suéter Tejido Nova", d: "Suéter tejido de punto fino, cuello redondo.", p: 419, i: "photo-1620012253295-c15cc3e65df4", c: "hombre", t: "Suéteres", s: "Elegante", m: "Mezcla lana-algodón", col: ["beige", "gris", "vino"], r: 4.6 },
+  { n: "Conjunto Sport Nova", d: "Conjunto deportivo de sudadera y pantalón a juego.", p: 599, i: "photo-1483118714900-540cf339fd46", c: "hombre", t: "Conjuntos", s: "Deportivo", m: "Algodón french terry", col: ["gris", "negro"], r: 4.8, b: "Nuevo" },
+  { n: "Sudadera Crewneck", d: "Sudadera cuello redondo con estampado minimalista.", p: 299, i: "photo-1620799140408-edc6dcb6d633", c: "hombre", t: "Sudaderas", s: "Urbano", m: "Algodón french terry", col: ["morado", "negro", "blanco"], r: 4.6 },
+  { n: "Blazer Casual Slim", d: "Blazer slim sin forro, perfecto para looks smart casual.", p: 789, i: "photo-1507003211169-0a1dd7228f2d", c: "hombre", t: "Ropa elegante", s: "Elegante", m: "Mezcla de lino y viscosa", col: ["azul", "beige"], r: 4.8 },
+  { n: "Chaqueta Puffer Hombre", d: "Chaqueta acolchada ultraligera con relleno térmico.", p: 749, i: "photo-1544022613-e87ca75a784a", c: "hombre", t: "Chaquetas", s: "Casual", m: "Nylon con relleno térmico", col: ["negro", "azul"], r: 4.7 },
+
+  // ---------- MUJER ----------
+  { n: "Elegant Midi Dress", d: "Vestido midi satinado de edición limitada.", p: 459, i: "photo-1595777457583-95e059d581b8", c: "mujer", t: "Vestidos", s: "Elegante", m: "Satén de viscosa", col: ["rosa", "negro", "morado"], r: 4.9, b: "Nuevo" },
+  { n: "Silk Blouse Perla", d: "Blusa de seda cuello V con caída fluida.", p: 429, i: "photo-1490481651871-ab68de25d43d", c: "mujer", t: "Blusas", s: "Elegante", m: "Seda satinada", col: ["blanco", "beige", "celeste"], r: 4.8 },
+  { n: "Wide Leg Pants", d: "Pantalón wide leg fluido de caída premium.", p: 389, i: "photo-1594633312681-425c7b97ccd1", c: "mujer", t: "Pantalones", s: "Elegante", m: "Crepé de poliéster", col: ["beige", "negro", "blanco"], r: 4.5, b: "Nuevo" },
+  { n: "Cropped Hoodie", d: "Hoodie corta con estampado exclusivo NOVASTYLE.", p: 299, i: "photo-1620799140408-edc6dcb6d633", c: "mujer", t: "Hoodies", s: "Urbano", m: "Algodón french terry", col: ["rosa", "morado", "gris"], r: 4.7, b: "Más vendido" },
+  { n: "Puffer Jacket Mujer", d: "Chaqueta acolchada ultraligera con capucha desmontable.", p: 749, i: "photo-1544022613-e87ca75a784a", c: "mujer", t: "Chaquetas", s: "Casual", m: "Nylon reciclado", col: ["blanco", "negro", "rosa"], r: 4.7 },
+  { n: "Mom Jeans Vintage", d: "Jeans tiro alto corte mom de lavado vintage.", p: 399, i: "photo-1541099649105-f69ad21f3246", c: "mujer", t: "Jeans", s: "Casual", m: "100% algodón denim", col: ["azul", "celeste"], r: 4.8, b: "Más vendido" },
+  { n: "Falda Plisada Midi", d: "Falda plisada midi con cintura elástica.", p: 319, i: "photo-1577900232427-18219b9166a0", c: "mujer", t: "Faldas", s: "Elegante", m: "Poliéster plisado", col: ["negro", "beige", "morado"], r: 4.6 },
+  { n: "Top Ribbed Basic", d: "Top acanalado de tirantes, ajuste segunda piel.", p: 159, i: "photo-1503342217505-b0a15ec3261c", c: "mujer", t: "Tops", s: "Casual", m: "Algodón acanalado", col: ["blanco", "negro", "verde"], r: 4.4 },
+  { n: "Camiseta Boxy Fit", d: "Camiseta de corte boxy con hombro caído.", p: 189, i: "photo-1521572163474-6864f9cf17ab", c: "mujer", t: "Camisetas", s: "Casual", m: "Algodón orgánico", col: ["blanco", "celeste", "rosa"], r: 4.5 },
+  { n: "Short Denim Alto", d: "Short de mezclilla tiro alto con deshilado.", p: 249, i: "photo-1591195853828-11db59a44f6b", c: "mujer", t: "Shorts", s: "Casual", m: "Denim de algodón", col: ["azul", "blanco"], r: 4.5 },
+  { n: "Sudadera Colorblock", d: "Sudadera colorblock inspirada en la paleta NOVA.", p: 329, i: "photo-1556821840-3a63f95609a7", c: "mujer", t: "Sudaderas", s: "Urbano", m: "Algodón mezclado", col: ["morado", "celeste", "rosa"], r: 4.7, b: "Nuevo" },
+  { n: "Chaqueta Denim Crop", d: "Chaqueta de mezclilla corta con botones metálicos.", p: 489, i: "photo-1591047139829-d91aecb6caea", c: "mujer", t: "Chaquetas", s: "Urbano", m: "Denim rígido", col: ["azul", "blanco"], r: 4.6 },
+  { n: "Suéter Knit Suave", d: "Suéter de punto suave con cuello alto.", p: 399, i: "photo-1576871337622-98d48d1cf531", c: "mujer", t: "Suéteres", s: "Elegante", m: "Mezcla acrílico-lana", col: ["beige", "rosa", "gris"], r: 4.7 },
+  { n: "Conjunto Loungewear", d: "Conjunto de top y pantalón en tejido suave.", p: 549, i: "photo-1515886657613-9f3515b0c78f", c: "mujer", t: "Conjuntos", s: "Casual", m: "Modal y algodón", col: ["beige", "rosa"], r: 4.8, b: "Nuevo" },
+  { n: "Legging Sport Nova", d: "Legging deportivo de compresión con cintura alta.", p: 279, i: "photo-1506629082955-511b1aa562c8", c: "mujer", t: "Ropa deportiva", s: "Deportivo", m: "Poliamida y elastano", col: ["negro", "morado", "azul"], r: 4.8, b: "Más vendido" },
+  { n: "Vestido Casual Floral", d: "Vestido corto de estampado floral y tirantes ajustables.", p: 359, i: "photo-1572804013309-59a88b7e92f1", c: "mujer", t: "Vestidos", s: "Casual", m: "Viscosa ligera", col: ["rosa", "celeste"], r: 4.6 },
+
+  // ---------- NIÑOS ----------
+  { n: "Camiseta Kids Rainbow", d: "Camiseta infantil de algodón orgánico con estampado.", p: 149, i: "photo-1519238263530-99bdd11df2ea", c: "ninos", t: "Camisetas", s: "Casual", m: "100% algodón orgánico", col: ["celeste", "blanco", "verde"], sz: KID_SIZES, r: 4.7, b: "Nuevo" },
+  { n: "Conjunto Denim Niño", d: "Conjunto denim moderno de camisa y pantalón.", p: 329, i: "photo-1503944583220-79d8926ad5e2", c: "ninos", t: "Conjuntos", s: "Casual", m: "Denim suave", col: ["azul"], sz: KID_SIZES, r: 4.6 },
+  { n: "Jeans Kids Comfort", d: "Jeans infantil con cintura ajustable interna.", p: 219, i: "photo-1600185365926-3a2ce3cdb9eb", c: "ninos", t: "Jeans", s: "Casual", m: "Denim elástico", col: ["azul", "negro"], sz: KID_SIZES, r: 4.5 },
+  { n: "Sudadera Kids Nova", d: "Sudadera infantil con capucha y bolsillo canguro.", p: 259, i: "photo-1519457431-44ccd64a579b", c: "ninos", t: "Sudaderas", s: "Urbano", m: "Algodón afelpado", col: ["azul", "gris"], sz: KID_SIZES, r: 4.7 },
+  { n: "Chaqueta Niño Windbreaker", d: "Rompevientos infantil ligero e impermeable.", p: 299, i: "photo-1471286174890-9c112ffca5b4", c: "ninos", t: "Chaquetas", s: "Deportivo", m: "Nylon impermeable", col: ["celeste", "verde"], sz: KID_SIZES, r: 4.6 },
+  { n: "Short Kids Play", d: "Short infantil de secado rápido para jugar.", p: 139, i: "photo-1522771930-78848d9293e8", c: "ninos", t: "Shorts", s: "Deportivo", m: "Poliéster ligero", col: ["azul", "verde"], sz: KID_SIZES, r: 4.4 },
+  { n: "Camisa Niño Cuadros", d: "Camisa infantil de cuadros con botones frontales.", p: 199, i: "photo-1514090458221-65bb69cf63e6", c: "ninos", t: "Camisas", s: "Casual", m: "Franela de algodón", col: ["vino", "azul"], sz: KID_SIZES, r: 4.5 },
+  { n: "Pantalón Kids Jogger", d: "Jogger infantil cómodo con puño elástico.", p: 189, i: "photo-1503919545889-aef636e10ad4", c: "ninos", t: "Pantalones", s: "Deportivo", m: "Algodón french terry", col: ["gris", "negro"], sz: KID_SIZES, r: 4.6 },
+
+  // ---------- NIÑAS ----------
+  { n: "Vestido Verano Niña", d: "Vestido de verano floral con vuelo y tirantes.", p: 219, i: "photo-1518831959646-742c3a14ebf7", c: "ninas", t: "Vestidos", s: "Casual", m: "Algodón ligero", col: ["rosa", "celeste"], sz: KID_SIZES, r: 4.8, b: "Más vendido" },
+  { n: "Blusa Niña Volantes", d: "Blusa infantil con volantes y detalle bordado.", p: 179, i: "photo-1476234251651-f353703a034d", c: "ninas", t: "Blusas", s: "Elegante", m: "Viscosa suave", col: ["blanco", "rosa"], sz: KID_SIZES, r: 4.6 },
+  { n: "Falda Niña Plisada", d: "Falda plisada infantil con short interior.", p: 169, i: "photo-1519457431-44ccd64a579b", c: "ninas", t: "Faldas", s: "Casual", m: "Poliéster plisado", col: ["morado", "rosa"], sz: KID_SIZES, r: 4.5 },
+  { n: "Conjunto Niña Nova", d: "Conjunto infantil de sudadera y legging a juego.", p: 289, i: "photo-1503919545889-aef636e10ad4", c: "ninas", t: "Conjuntos", s: "Urbano", m: "Algodón mezclado", col: ["rosa", "morado"], sz: KID_SIZES, r: 4.7, b: "Nuevo" },
+  { n: "Jeans Niña Skinny", d: "Jeans infantil skinny con bordado floral.", p: 229, i: "photo-1471286174890-9c112ffca5b4", c: "ninas", t: "Jeans", s: "Casual", m: "Denim elástico", col: ["azul", "celeste"], sz: KID_SIZES, r: 4.5 },
+  { n: "Chaqueta Niña Peluche", d: "Chaqueta infantil de peluche suave y cálida.", p: 319, i: "photo-1522771930-78848d9293e8", c: "ninas", t: "Chaquetas", s: "Casual", m: "Sherpa sintético", col: ["beige", "rosa"], sz: KID_SIZES, r: 4.7 },
+  { n: "Camiseta Niña Estrella", d: "Camiseta infantil con estampado de estrella brillante.", p: 139, i: "photo-1519238263530-99bdd11df2ea", c: "ninas", t: "Camisetas", s: "Casual", m: "Algodón orgánico", col: ["blanco", "morado"], sz: KID_SIZES, r: 4.4 },
+  { n: "Short Niña Verano", d: "Short infantil de verano con cintura elástica.", p: 129, i: "photo-1476234251651-f353703a034d", c: "ninas", t: "Shorts", s: "Casual", m: "Algodón poplin", col: ["rosa", "blanco"], sz: KID_SIZES, r: 4.4 },
+
+  // ---------- CALZADO ----------
+  { n: "Runner Sneakers", d: "Zapatillas urbanas con suela ultra-light.", p: 699, i: "photo-1542291026-7eec264c27ff", c: "calzado", t: "Sneakers hombre", s: "Deportivo", m: "Malla técnica y goma EVA", col: ["blanco", "negro"], sz: SHOE_SIZES, r: 4.7, b: "Más vendido" },
+  { n: "Chunky Sneakers", d: "Sneakers chunky de diseño futurista.", p: 779, i: "photo-1595950653106-6c9ebd614d3a", c: "calzado", t: "Sneakers mujer", s: "Urbano", m: "Piel sintética y goma", col: ["blanco", "rosa"], sz: SHOE_SIZES, r: 4.6 },
+  { n: "Leather Boots", d: "Botines de cuero con suela reforzada.", p: 849, i: "photo-1608256246200-53e635b5b65f", c: "calzado", t: "Botas", s: "Elegante", m: "Cuero genuino", col: ["cafe", "negro"], sz: SHOE_SIZES, r: 4.9 },
+  { n: "Heels Metallic", d: "Tacones metálicos edición fiesta.", p: 589, i: "photo-1543163521-1bf539c55dd2", c: "calzado", t: "Zapatos elegantes", s: "Elegante", m: "Microfibra metalizada", col: ["dorado", "negro"], sz: SHOE_SIZES, r: 4.5, b: "Oferta" },
+  { n: "Zapato Casual Hombre", d: "Zapato casual de piel con suela flexible.", p: 649, i: "photo-1549298916-b41d501d3772", c: "calzado", t: "Zapatos casuales", s: "Casual", m: "Piel vacuna", col: ["cafe", "negro"], sz: SHOE_SIZES, r: 4.6 },
+  { n: "Sandalias Verano Mujer", d: "Sandalias planas de tiras cruzadas.", p: 329, i: "photo-1603487742131-4160ec999306", c: "calzado", t: "Sandalias", s: "Casual", m: "Piel sintética", col: ["beige", "negro"], sz: SHOE_SIZES, r: 4.4 },
+  { n: "Sneakers Kids Color", d: "Zapatillas coloridas infantiles con velcro.", p: 289, i: "photo-1514989940723-e8e51635b782", c: "calzado", t: "Calzado niño", s: "Deportivo", m: "Textil y goma", col: ["azul", "verde"], sz: KID_SHOE_SIZES, r: 4.8 },
+  { n: "Sneakers Niña Glitter", d: "Zapatillas infantiles con detalles brillantes.", p: 299, i: "photo-1600185365483-26d7a4cc7519", c: "calzado", t: "Calzado niña", s: "Casual", m: "Textil glitter y goma", col: ["rosa", "morado"], sz: KID_SHOE_SIZES, r: 4.7, b: "Nuevo" },
+  { n: "Botas Trekking Nova", d: "Botas resistentes para exteriores con suela antideslizante.", p: 899, i: "photo-1520639888713-7851133b1ed0", c: "calzado", t: "Botas", s: "Deportivo", m: "Nobuck y goma vibrante", col: ["cafe", "verde"], sz: SHOE_SIZES, r: 4.8 },
+  { n: "Zapatilla Running Pro", d: "Zapatilla de running con amortiguación reactiva.", p: 819, i: "photo-1465453869711-7e174808ace9", c: "calzado", t: "Calzado deportivo", s: "Deportivo", m: "Knit técnico", col: ["celeste", "negro"], sz: SHOE_SIZES, r: 4.9, b: "Más vendido" },
+
+  // ---------- BOLSOS ----------
+  { n: "Crossbody Bag", d: "Bolso crossbody de piel vegana con correa ajustable.", p: 469, i: "photo-1548036328-c9fa89d128fa", c: "bolsos", t: "Bolsos", s: "Elegante", m: "Piel vegana", col: ["negro", "beige"], sz: ONE_SIZE, r: 4.6 },
+  { n: "Nova Backpack Tech", d: "Mochila resistente al agua con compartimento para laptop.", p: 549, i: "photo-1553062407-98eeb64c6a62", c: "bolsos", t: "Mochilas", s: "Urbano", m: "Poliéster impermeable", col: ["negro", "gris"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Cartera Mini Nova", d: "Cartera compacta con cierre magnético y tarjetero.", p: 249, i: "photo-1584917865442-de89df76afd3", c: "bolsos", t: "Carteras", s: "Elegante", m: "Piel sintética", col: ["rosa", "negro"], sz: ONE_SIZE, r: 4.4 },
+  { n: "Tote Bag Urbana", d: "Bolso tote amplio ideal para el día a día.", p: 379, i: "photo-1594223274512-ad4803739b7c", c: "bolsos", t: "Bolsos", s: "Casual", m: "Lona de algodón", col: ["beige", "negro"], sz: ONE_SIZE, r: 4.6, b: "Nuevo" },
+  { n: "Bolso Hombro Satinado", d: "Bolso de hombro satinado para ocasiones especiales.", p: 429, i: "photo-1590874103328-eac38a683ce7", c: "bolsos", t: "Bolsos", s: "Elegante", m: "Satén estructurado", col: ["morado", "dorado"], sz: ONE_SIZE, r: 4.7 },
+
+  // ---------- ACCESORIOS ----------
+  { n: "Signature Cap", d: "Gorra bordada con logo NOVA metálico.", p: 129, i: "photo-1588850561407-ed78c282e89b", c: "accesorios", t: "Gorras", s: "Urbano", m: "Sarga de algodón", col: ["negro", "azul"], sz: ONE_SIZE, r: 4.4, b: "Oferta" },
+  { n: "Aviator Sunglasses", d: "Lentes aviador dorados con protección UV400.", p: 259, i: "photo-1572635196237-14b3f281503f", c: "accesorios", t: "Lentes", s: "Elegante", m: "Metal y lente polarizado", col: ["dorado", "negro"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Luxury Watch Nova", d: "Reloj minimalista con malla de acero.", p: 999, i: "photo-1524592094714-0f0654e20314", c: "accesorios", t: "Relojes", s: "Elegante", m: "Acero inoxidable", col: ["dorado", "gris"], sz: ONE_SIZE, r: 4.9, b: "Oferta" },
+  { n: "Cinturón Piel Nova", d: "Cinturón de piel con hebilla grabada.", p: 219, i: "photo-1611085583191-a3b181a88401", c: "accesorios", t: "Cinturones", s: "Elegante", m: "Piel genuina", col: ["cafe", "negro"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Bufanda Tejida", d: "Bufanda tejida suave en tonos de la paleta NOVA.", p: 189, i: "photo-1601924994987-69e26d50dc26", c: "accesorios", t: "Accesorios de moda", s: "Casual", m: "Acrílico suave", col: ["morado", "beige"], sz: ONE_SIZE, r: 4.4 },
+  { n: "Set Joyería Minimal", d: "Set de collar y aretes de acabado dorado mate.", p: 279, i: "photo-1611652022419-a9419f74343d", c: "accesorios", t: "Accesorios de moda", s: "Elegante", m: "Acero con baño dorado", col: ["dorado"], sz: ONE_SIZE, r: 4.7, b: "Nuevo" },
+
+  // ---------- MUJER (ampliación) ----------
+  { n: "Blusa Satinada Nova", d: "Blusa satinada de manga larga con puño abotonado.", p: 369, i: "photo-1485231183945-fffde7cc051e", c: "mujer", t: "Blusas", s: "Elegante", m: "Satén de poliéster", col: ["celeste", "beige"], r: 4.6 },
+  { n: "Vestido Slip Elegante", d: "Vestido slip de tirantes finos y caída fluida.", p: 489, i: "photo-1595777457583-95e059d581b8", c: "mujer", t: "Vestidos", s: "Elegante", m: "Satén de viscosa", col: ["negro", "morado"], r: 4.7, b: "Nuevo" },
+  { n: "Camisa Oversize Mujer", d: "Camisa oversize de popelina con bolsillo frontal.", p: 339, i: "photo-1602810318383-e386cc2a3ccf", c: "mujer", t: "Camisas", s: "Casual", m: "Popelina de algodón", col: ["blanco", "celeste"], r: 4.5 },
+  { n: "Falda Denim Midi", d: "Falda midi de mezclilla con abertura frontal.", p: 349, i: "photo-1541099649105-f69ad21f3246", c: "mujer", t: "Faldas", s: "Urbano", m: "Denim rígido", col: ["azul"], r: 4.5 },
+  { n: "Top Deportivo Nova", d: "Top deportivo de sujeción media y tejido transpirable.", p: 189, i: "photo-1506629082955-511b1aa562c8", c: "mujer", t: "Ropa deportiva", s: "Deportivo", m: "Poliamida y elastano", col: ["morado", "negro"], r: 4.6 },
+  { n: "Conjunto Sastre Mujer", d: "Conjunto de blazer y pantalón de vestir a juego.", p: 899, i: "photo-1594633312681-425c7b97ccd1", c: "mujer", t: "Ropa elegante", s: "Elegante", m: "Crepé de poliéster", col: ["beige", "negro"], r: 4.8, b: "Nuevo" },
+  { n: "Hoodie Mujer Essential", d: "Hoodie clásica con capucha forrada y bolsillo canguro.", p: 329, i: "photo-1556821840-3a63f95609a7", c: "mujer", t: "Hoodies", s: "Casual", m: "Algodón french terry", col: ["gris", "rosa"], r: 4.6 },
+  { n: "Suéter Cárdigan Nova", d: "Cárdigan de punto con botones y bolsillos laterales.", p: 429, i: "photo-1576871337622-98d48d1cf531", c: "mujer", t: "Suéteres", s: "Casual", m: "Mezcla acrílico-lana", col: ["beige", "morado"], r: 4.6 },
+
+  // ---------- HOMBRE (ampliación) ----------
+  { n: "Camisa Lino Nova", d: "Camisa de lino de manga larga, fresca y ligera.", p: 379, i: "photo-1602810318383-e386cc2a3ccf", c: "hombre", t: "Camisas", s: "Elegante", m: "100% lino", col: ["blanco", "beige"], r: 4.7 },
+  { n: "Polo Rayas Nova", d: "Polo de piqué con rayas contrastantes y cuello tejido.", p: 259, i: "photo-1586790170083-2f9ceadc732d", c: "hombre", t: "Polos", s: "Casual", m: "Piqué de algodón", col: ["azul", "blanco"], r: 4.5 },
+  { n: "Pantalón Chino Slim", d: "Chino slim de gabardina elástica con tiro medio.", p: 399, i: "photo-1624378439575-d8705ad7ae80", c: "hombre", t: "Pantalones", s: "Casual", m: "Gabardina elástica", col: ["beige", "negro"], r: 4.6 },
+  { n: "Camiseta Gráfica Nova", d: "Camiseta con estampado gráfico exclusivo de la marca.", p: 199, i: "photo-1521572163474-6864f9cf17ab", c: "hombre", t: "Camisetas", s: "Urbano", m: "Algodón peinado", col: ["negro", "morado"], r: 4.5, b: "Nuevo" },
+  { n: "Short Chino Hombre", d: "Short chino de corte recto con cinturón incluido.", p: 229, i: "photo-1591195853828-11db59a44f6b", c: "hombre", t: "Shorts", s: "Casual", m: "Algodón gabardina", col: ["beige", "azul"], r: 4.4 },
+  { n: "Conjunto Urbano Hombre", d: "Conjunto de sudadera y jogger en tejido afelpado.", p: 629, i: "photo-1483118714900-540cf339fd46", c: "hombre", t: "Conjuntos", s: "Urbano", m: "Algodón french terry", col: ["negro", "azul"], r: 4.7 },
+  { n: "Suéter Cuello Alto", d: "Suéter de cuello alto en punto fino.", p: 439, i: "photo-1620012253295-c15cc3e65df4", c: "hombre", t: "Suéteres", s: "Elegante", m: "Mezcla lana-algodón", col: ["gris", "negro"], r: 4.6 },
+
+  // ---------- NIÑOS / NIÑAS (ampliación) ----------
+  { n: "Camisa Niña Bordada", d: "Camisa infantil con bordado floral en el cuello.", p: 209, i: "photo-1476234251651-f353703a034d", c: "ninas", t: "Camisas", s: "Elegante", m: "Algodón poplin", col: ["blanco", "celeste"], sz: KID_SIZES, r: 4.5 },
+  { n: "Pantalón Niña Cargo", d: "Pantalón cargo infantil con bolsillos laterales.", p: 219, i: "photo-1519457431-44ccd64a579b", c: "ninas", t: "Pantalones", s: "Urbano", m: "Gabardina de algodón", col: ["beige", "rosa"], sz: KID_SIZES, r: 4.4 },
+  { n: "Sudadera Niña Nova", d: "Sudadera infantil con capucha y estampado brillante.", p: 259, i: "photo-1518831959646-742c3a14ebf7", c: "ninas", t: "Sudaderas", s: "Casual", m: "Algodón afelpado", col: ["rosa", "morado"], sz: KID_SIZES, r: 4.6 },
+  { n: "Polo Niño Clásico", d: "Polo infantil de piqué con cuello estructurado.", p: 169, i: "photo-1519238263530-99bdd11df2ea", c: "ninos", t: "Polos", s: "Casual", m: "Piqué de algodón", col: ["azul", "blanco"], sz: KID_SIZES, r: 4.5 },
+  { n: "Chaqueta Niño Denim", d: "Chaqueta de mezclilla infantil con botones metálicos.", p: 329, i: "photo-1503944583220-79d8926ad5e2", c: "ninos", t: "Chaquetas", s: "Casual", m: "Denim de algodón", col: ["azul"], sz: KID_SIZES, r: 4.6 },
+
+  // ---------- CALZADO (ampliación) ----------
+  { n: "Sneakers Retro Piel", d: "Sneakers retro de piel lisa con suela delgada.", p: 729, i: "photo-1549298916-b41d501d3772", c: "calzado", t: "Sneakers hombre", s: "Casual", m: "Piel y goma", col: ["blanco", "cafe"], sz: SHOE_SIZES, r: 4.7 },
+  { n: "Zapato Oxford Elegante", d: "Zapato Oxford de vestir con acabado pulido.", p: 899, i: "photo-1608256246200-53e635b5b65f", c: "calzado", t: "Zapatos elegantes", s: "Elegante", m: "Cuero genuino", col: ["negro", "cafe"], sz: SHOE_SIZES, r: 4.8 },
+  { n: "Sandalia Elegante Nova", d: "Sandalia de tacón bajo con tiras satinadas.", p: 449, i: "photo-1603487742131-4160ec999306", c: "calzado", t: "Sandalias", s: "Elegante", m: "Satén y microfibra", col: ["dorado", "negro"], sz: SHOE_SIZES, r: 4.5 },
+  { n: "Bota Niña Invierno", d: "Botín infantil forrado, cálido y antideslizante.", p: 349, i: "photo-1600185365483-26d7a4cc7519", c: "calzado", t: "Calzado niña", s: "Casual", m: "Sintético forrado", col: ["rosa", "cafe"], sz: KID_SHOE_SIZES, r: 4.6 },
+  { n: "Tenis Niño Deportivo", d: "Tenis infantil deportivo de sujeción firme.", p: 319, i: "photo-1514989940723-e8e51635b782", c: "calzado", t: "Calzado niño", s: "Deportivo", m: "Malla y goma", col: ["azul", "negro"], sz: KID_SHOE_SIZES, r: 4.6 },
+
+  // ---------- BOLSOS (ampliación) ----------
+  { n: "Bolso Casual Bandolera", d: "Bandolera casual de lona con bolsillo frontal.", p: 329, i: "photo-1594223274512-ad4803739b7c", c: "bolsos", t: "Bolsos", s: "Casual", m: "Lona resistente", col: ["beige", "verde"], sz: ONE_SIZE, r: 4.4 },
+  { n: "Mochila Urbana Nova", d: "Mochila urbana compacta con cierres reforzados.", p: 469, i: "photo-1553062407-98eeb64c6a62", c: "bolsos", t: "Mochilas", s: "Urbano", m: "Poliéster reciclado", col: ["negro", "azul"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Cartera Larga Elegante", d: "Cartera larga con múltiples tarjeteros y cierre.", p: 289, i: "photo-1584917865442-de89df76afd3", c: "bolsos", t: "Carteras", s: "Elegante", m: "Piel sintética", col: ["negro", "vino"], sz: ONE_SIZE, r: 4.5 },
+
+  // ---------- JOYERÍA ----------
+  { n: "Collar Cadena Dorada", d: "Collar de cadena fina con acabado dorado mate.", p: 249, i: "photo-1599643478518-a784e5dc4c8f", c: "joyeria", t: "Collares", s: "Elegante", m: "Acero con baño de oro", col: ["dorado"], sz: ONE_SIZE, r: 4.7, b: "Nuevo" },
+  { n: "Cadena Urbana Plata", d: "Cadena urbana de eslabón grueso, acabado plata.", p: 289, i: "photo-1611591437281-460bfbe1220a", c: "joyeria", t: "Cadenas", s: "Urbano", m: "Acero inoxidable", col: ["gris"], sz: ONE_SIZE, r: 4.6 },
+  { n: "Pulsera Minimal Nova", d: "Pulsera minimalista ajustable de acabado brillante.", p: 179, i: "photo-1602751584552-8ba73aad10e1", c: "joyeria", t: "Pulseras", s: "Elegante", m: "Acero quirúrgico", col: ["dorado", "gris"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Brazalete Rígido", d: "Brazalete rígido de superficie lisa y cierre oculto.", p: 219, i: "photo-1610461888750-10bfc601b874", c: "joyeria", t: "Brazaletes", s: "Elegante", m: "Latón con baño dorado", col: ["dorado"], sz: ONE_SIZE, r: 4.4 },
+  { n: "Anillo Set Trío", d: "Set de tres anillos apilables de distintos grosores.", p: 199, i: "photo-1515562141207-7a88fb7ce338", c: "joyeria", t: "Anillos", s: "Casual", m: "Acero con baño dorado", col: ["dorado", "gris"], sz: ONE_SIZE, r: 4.6 },
+  { n: "Aretes Aro Clásicos", d: "Aretes de aro medianos, ligeros y cómodos.", p: 159, i: "photo-1621072156002-e2fccdc0b176", c: "joyeria", t: "Aretes", s: "Casual", m: "Acero hipoalergénico", col: ["dorado"], sz: ONE_SIZE, r: 4.5 },
+  { n: "Aretes Perla Nova", d: "Aretes con perla sintética y base dorada.", p: 189, i: "photo-1617038220319-276d3cfab638", c: "joyeria", t: "Aretes", s: "Elegante", m: "Perla sintética y acero", col: ["blanco", "dorado"], sz: ONE_SIZE, r: 4.6 },
+  { n: "Collar Colgante Piedra", d: "Collar con colgante de piedra facetada.", p: 269, i: "photo-1620916566398-39f1143ab7be", c: "joyeria", t: "Collares", s: "Elegante", m: "Acero y cristal", col: ["morado", "dorado"], sz: ONE_SIZE, r: 4.5 },
+
+  // ---------- FRAGANCIAS ----------
+  { n: "Nova Bloom Eau de Parfum", d: "Fragancia femenina floral luminosa de larga duración.", p: 549, i: "photo-1541643600914-78b084683601", c: "fragancias", t: "Fragancia mujer", s: "Elegante", m: "Eau de Parfum 100 ml", col: ["rosa"], sz: ONE_SIZE, r: 4.8, b: "Nuevo", f: { ml: "100 ml", family: "Floral frutal", notes: "Peonía, pera y almizcle blanco" } },
+  { n: "Nova Velvet Nuit", d: "Fragancia femenina oriental para la noche.", p: 629, i: "photo-1595425970377-c9703cf48b6d", c: "fragancias", t: "Fragancia mujer", s: "Elegante", m: "Eau de Parfum 90 ml", col: ["morado"], sz: ONE_SIZE, r: 4.7, f: { ml: "90 ml", family: "Oriental amaderada", notes: "Vainilla, pachulí y ámbar" } },
+  { n: "Nova Blue Intense", d: "Fragancia masculina fresca con fondo amaderado.", p: 579, i: "photo-1587017539504-67cfbddac569", c: "fragancias", t: "Fragancia hombre", s: "Urbano", m: "Eau de Toilette 100 ml", col: ["azul"], sz: ONE_SIZE, r: 4.8, b: "Más vendido", f: { ml: "100 ml", family: "Aromática fougère", notes: "Bergamota, lavanda y cedro" } },
+  { n: "Nova Noir Homme", d: "Fragancia masculina intensa y elegante para la noche.", p: 659, i: "photo-1592945403244-b3fbafd7f539", c: "fragancias", t: "Fragancia hombre", s: "Elegante", m: "Eau de Parfum 100 ml", col: ["negro"], sz: ONE_SIZE, r: 4.7, f: { ml: "100 ml", family: "Amaderada especiada", notes: "Cardamomo, cuero y vetiver" } },
+  { n: "Nova Citrus Unisex", d: "Fragancia unisex cítrica y fresca para uso diario.", p: 489, i: "photo-1594035910387-fea47794261f", c: "fragancias", t: "Fragancia unisex", s: "Casual", m: "Eau de Toilette 75 ml", col: ["celeste"], sz: ONE_SIZE, r: 4.6, f: { ml: "75 ml", family: "Cítrica fresca", notes: "Limón, neroli y musgo" } },
+  { n: "Nova White Musk", d: "Fragancia unisex de almizcle suave y envolvente.", p: 519, i: "photo-1523293182086-7651a899d37f", c: "fragancias", t: "Fragancia unisex", s: "Casual", m: "Eau de Parfum 80 ml", col: ["blanco"], sz: ONE_SIZE, r: 4.6, f: { ml: "80 ml", family: "Almizclada", notes: "Almizcle blanco, iris y sándalo" } },
+  { n: "Nova Rose Gold", d: "Fragancia femenina afrutada con fondo dulce.", p: 559, i: "photo-1615634260167-c8cdede054de", c: "fragancias", t: "Fragancia mujer", s: "Elegante", m: "Eau de Parfum 90 ml", col: ["dorado", "rosa"], sz: ONE_SIZE, r: 4.7, f: { ml: "90 ml", family: "Floral dulce", notes: "Rosa, frambuesa y praliné" } },
+];
+
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+/** Solo la fotografía real del producto (misma prenda). */
+function gallery(main: string) {
+  return [img(main, 1000)];
+}
+
+
+export const PRODUCTS: Product[] = RAW.map((r, idx) => ({
+  id: `p${idx + 1}`,
+  slug: slugify(r.n),
+  name: r.n,
+  description: r.d,
+  longDescription: r.f
+    ? `${r.d} Presentación de ${r.f.ml}. Familia olfativa ${r.f.family.toLowerCase()}, con notas de ${r.f.notes.toLowerCase()}. Una creación propia de NOVASTYLE, pensada para acompañar tu estilo de día y de noche.`
+    : `${r.d} Confeccionada en ${r.m.toLowerCase()}, esta pieza de la línea ${r.s.toLowerCase()} de NOVASTYLE combina comodidad y diseño contemporáneo. Ideal para crear looks versátiles todos los días. Lavado recomendado a máquina en frío; no usar blanqueador.`,
+  price: r.p,
+  image: img(r.i),
+  images: gallery(r.i),
+  category: r.c,
+  categoryLabel: CATEGORY_LABEL[r.c],
+  type: r.t,
+  style: r.s,
+  material: r.m,
+  availability: idx % 11 === 0 ? "Últimas unidades" : "Disponible en stock",
+  colors: r.col.map((k) => C[k]).filter(Boolean),
+  sizes: r.sz ?? APPAREL_SIZES,
+  rating: r.r,
+  badge: r.b,
+  fragrance: r.f,
+}));
+
+export const CATEGORIES: { key: string; label: string }[] = [
+  { key: "todos", label: "Todos" },
+  { key: "hombre", label: "Hombre" },
+  { key: "mujer", label: "Mujer" },
+  { key: "ninos", label: "Niños" },
+  { key: "ninas", label: "Niñas" },
+  { key: "calzado", label: "Calzado" },
+  { key: "bolsos", label: "Bolsos" },
+  { key: "joyeria", label: "Joyería" },
+  { key: "accesorios", label: "Accesorios" },
+  { key: "fragancias", label: "Fragancias" },
+];
+
+export const getProduct = (id: string) =>
+  PRODUCTS.find((p) => p.id === id || p.slug === id);
+
+export const relatedProducts = (p: Product, n = 6) =>
+  PRODUCTS.filter((x) => x.id !== p.id && (x.category === p.category || x.style === p.style)).slice(0, n);
+
+export const SIZE_GUIDE = {
+  adulto: {
+    title: "Ropa adulto (cm)",
+    head: ["Talla", "Pecho", "Cintura", "Cadera"],
+    rows: [
+      ["XS", "82-86", "64-68", "88-92"],
+      ["S", "87-91", "69-73", "93-97"],
+      ["M", "92-97", "74-79", "98-103"],
+      ["L", "98-103", "80-85", "104-109"],
+      ["XL", "104-110", "86-92", "110-116"],
+      ["XXL", "111-117", "93-99", "117-123"],
+    ],
+  },
+  ninos: {
+    title: "Ropa infantil",
+    head: ["Talla", "Edad", "Estatura (cm)"],
+    rows: [
+      ["2A", "2 años", "88-94"],
+      ["4A", "4 años", "100-106"],
+      ["6A", "6 años", "112-118"],
+      ["8A", "8 años", "124-130"],
+      ["10A", "10 años", "136-142"],
+      ["12A", "12 años", "148-154"],
+    ],
+  },
+  calzado: {
+    title: "Calzado (cm de plantilla)",
+    head: ["Talla", "Longitud"],
+    rows: [
+      ["35", "22.5"],
+      ["36", "23.0"],
+      ["37", "23.5"],
+      ["38", "24.5"],
+      ["39", "25.0"],
+      ["40", "25.5"],
+      ["41", "26.5"],
+      ["42", "27.0"],
+      ["43", "27.5"],
+    ],
+  },
+};
