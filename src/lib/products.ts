@@ -415,24 +415,14 @@ const PRODUCT_POOL: Raw[] = [...RAW, ...VARIANTS];
 const QUOTAS: Record<CategoryKey, number> = { hombre: 22, mujer: 25, ninos: 8, ninas: 8, calzado: 10, bolsos: 5, joyeria: 3, accesorios: 3, fragancias: 5, skincare: 4, cuidado: 3, maquillaje: 3 };
 const ALL_RAW: Raw[] = (Object.keys(QUOTAS) as CategoryKey[]).flatMap((category) => PRODUCT_POOL.filter((p) => p.c === category).slice(0, QUOTAS[category]));
 
-const PHOTO_KEYWORDS: Record<CategoryKey, string> = {
-  hombre: "mens,fashion,clothing",
-  mujer: "womens,fashion,clothing",
-  ninos: "boys,clothing,fashion",
-  ninas: "girls,clothing,fashion",
-  calzado: "shoes,fashion",
-  bolsos: "handbag,fashion",
-  joyeria: "jewelry,fashion",
-  accesorios: "fashion,accessories",
-  fragancias: "perfume,fragrance",
-  skincare: "skincare,cosmetics",
-  cuidado: "personal,care,cosmetics",
-  maquillaje: "makeup,cosmetics",
-};
+const VERIFIED_PHOTO_IDS = [20440141, 28497464, 16711120, 15294527, 36942018, 17901274, 7691160, 9253780, 3735625, 34479698, 9011184, 7691100, 3735626, 7011391, 7691162, 4841531, 9011182, 31996023, 20766085, 34926536, 1619651];
 
-// Una fotografia distinta por producto, usando palabras clave de su categoria.
-const uniquePhotoFor = (category: CategoryKey, idx: number) =>
-  `https://loremflickr.com/600/750/${PHOTO_KEYWORDS[category]}?lock=${1000 + idx}`;
+// Fotografias reales de Pexels usando su CDN estable.
+// Se rota el encuadre para evitar tarjetas identicas cuando una categoria tiene mas productos.
+const uniquePhotoFor = (_category: CategoryKey, idx: number) => {
+  const id = VERIFIED_PHOTO_IDS[idx % VERIFIED_PHOTO_IDS.length];
+  return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=700&h=875&fit=crop`;
+};
 
 
 
