@@ -412,13 +412,66 @@ const VARIANTS: Raw[] = RAW.flatMap((r, idx) => {
 });
 
 const PRODUCT_POOL: Raw[] = [...RAW, ...VARIANTS];
-const QUOTAS: Record<CategoryKey, number> = { hombre: 26, mujer: 30, ninos: 10, ninas: 10, calzado: 14, bolsos: 10, joyeria: 8, accesorios: 8, fragancias: 8, skincare: 10, cuidado: 8, maquillaje: 8 };
+const QUOTAS: Record<CategoryKey, number> = { hombre: 22, mujer: 25, ninos: 8, ninas: 8, calzado: 10, bolsos: 5, joyeria: 3, accesorios: 3, fragancias: 5, skincare: 4, cuidado: 3, maquillaje: 3 };
 const ALL_RAW: Raw[] = (Object.keys(QUOTAS) as CategoryKey[]).flatMap((category) => PRODUCT_POOL.filter((p) => p.c === category).slice(0, QUOTAS[category]));
 
-const productVisual = (name: string, categoryLabel: string, idx: number) => {
-  const esc = (v: string) => v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c] || c));
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1125" viewBox="0 0 900 1125"><defs><linearGradient id="g${idx}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f172a"/><stop offset=".52" stop-color="#6d28d9"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs><rect width="900" height="1125" rx="44" fill="url(#g${idx})"/><text x="64" y="105" fill="white" font-family="Arial,sans-serif" font-size="32" font-weight="700">NOVASTYLE</text><text x="64" y="165" fill="white" opacity=".72" font-family="Arial,sans-serif" font-size="24">${esc(categoryLabel)}</text><text x="450" y="535" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="44" font-weight="800">${esc(name).slice(0, 34)}</text><text x="450" y="600" text-anchor="middle" fill="white" opacity=".75" font-family="Arial,sans-serif" font-size="25">Visual exclusivo del producto</text><text x="450" y="990" text-anchor="middle" fill="white" opacity=".5" font-family="Arial,sans-serif" font-size="20">#${String(idx + 1).padStart(3, "0")}</text></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+const CATEGORY_PHOTOS: Record<CategoryKey, string[]> = {
+  hombre: [
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=700&q=78"
+  ],
+  mujer: [
+    "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=78"
+  ],
+  ninos: [
+    "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=700&q=78"
+  ],
+  ninas: [
+    "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=700&q=78"
+  ],
+  calzado: [
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=700&q=78"
+  ],
+  bolsos: [
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=78"
+  ],
+  joyeria: [
+    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=78"
+  ],
+  accesorios: [
+    "https://images.unsplash.com/photo-1523779917675-b6ed3a42a561?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=700&q=78"
+  ],
+  fragancias: [
+    "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=78"
+  ],
+  skincare: [
+    "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=700&q=78"
+  ],
+  cuidado: [
+    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=700&q=78"
+  ],
+  maquillaje: [
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=78",
+    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=700&q=78"
+  ]
+};
+
+const categoryPhotoFor = (category: CategoryKey, idx: number) => {
+  const photos = CATEGORY_PHOTOS[category];
+  return photos[idx % photos.length];
 };
 
 
@@ -437,26 +490,6 @@ const REAL_PRODUCT_PHOTOS: Record<string, string> = {
 
 const realPhotoFor = (name: string) => REAL_PRODUCT_PHOTOS[name];
 
-const CATEGORY_REAL_PHOTOS: Record<CategoryKey, string[]> = {
-  hombre: ["photo-1516257984-b1b4d707412e","photo-1506629082955-511b1aa562c8","photo-1617137968427-85924c800a22"],
-  mujer: ["photo-1485231183945-fffde7cc051e","photo-1529139574466-a303027c1d8b","photo-1539109136881-3be0616acf4b"],
-  ninos: ["photo-1503919545889-aef636e10ad4","photo-1519238263530-99bdd11df2ea"],
-  ninas: ["photo-1518831959646-742c3a14ebf7","photo-1471286174890-9c112ffca5b4"],
-  calzado: ["photo-1549298916-b41d501d3772","photo-1542291026-7eec264c27ff","photo-1608231387042-66d1773070a5"],
-  bolsos: ["photo-1548036328-c9fa89d128fa","photo-1584917865442-de89df76afd3","photo-1594223274512-ad4803739b7c"],
-  joyeria: ["photo-1611652022419-a9419f74343d","photo-1599643478518-a784e5dc4c8f","photo-1515562141207-7a88fb7ce338"],
-  accesorios: ["photo-1523170335258-f5ed11844a49","photo-1523779917675-b6ed3a42a561"],
-  fragancias: ["photo-1541643600914-78b084683601","photo-1592945403244-b3fbafd7f539","photo-1615634260167-c8cdede054de"],
-  skincare: ["photo-1556228578-8c89e6adf883","photo-1571781926291-c477ebfd024b","photo-1598440947619-2c35fc9aa908"],
-  cuidado: ["photo-1556229010-6c3f2c9ca5f8","photo-1608248543803-ba4f8c70ae0b"],
-  maquillaje: ["photo-1596462502278-27bfdc403348","photo-1522335789203-aabd1fc54bc9","photo-1512496015851-a90fb38ba796"],
-};
-
-const categoryPhotoFor = (category: CategoryKey, idx: number) => {
-  const pool = CATEGORY_REAL_PHOTOS[category];
-  return img(pool[idx % pool.length], 900);
-};
-
 export const PRODUCTS: Product[] = ALL_RAW.map((r, idx) => ({
 
   id: `p${idx + 1}`,
@@ -467,8 +500,8 @@ export const PRODUCTS: Product[] = ALL_RAW.map((r, idx) => ({
     ? `${r.d} Presentación de ${r.f.ml}. Familia olfativa ${r.f.family.toLowerCase()}, con notas de ${r.f.notes.toLowerCase()}. Una creación propia de NOVASTYLE, pensada para acompañar tu estilo de día y de noche.`
     : `${r.d} Confeccionada en ${r.m.toLowerCase()}, esta pieza de la línea ${r.s.toLowerCase()} de NOVASTYLE combina comodidad y diseño contemporáneo. Ideal para crear looks versátiles todos los días. Lavado recomendado a máquina en frío; no usar blanqueador.`,
   price: r.p,
-  image: realPhotoFor(r.n.split(" · ")[0]) ?? categoryPhotoFor(r.c, idx),
-  images: [realPhotoFor(r.n.split(" · ")[0]) ?? categoryPhotoFor(r.c, idx)],
+  image: realPhotoFor(r.n) ?? categoryPhotoFor(r.c, idx),
+  images: [realPhotoFor(r.n) ?? categoryPhotoFor(r.c, idx)],
   category: r.c,
   categoryLabel: CATEGORY_LABEL[r.c],
   type: r.t,
