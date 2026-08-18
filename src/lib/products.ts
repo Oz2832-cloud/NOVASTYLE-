@@ -2098,3 +2098,45 @@ export function getProductBySlug(slug: string): Product | undefined {
 export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, limit);
 }
+
+
+// Compatibilidad con la pagina de detalle de producto.
+export const VIEW_LABELS = ["Fotografía del producto"];
+
+export const getProduct = (id: string) =>
+  PRODUCTS.find((p) => p.id === id || p.slug === id);
+
+export const relatedProducts = (p: Product, n = 6) =>
+  PRODUCTS.filter((x) => x.id !== p.id && (x.category === p.category || x.style === p.style)).slice(0, n);
+
+export const SIZE_GUIDE = {
+  adulto: {
+    title: "Ropa adulto (cm)",
+    head: ["Talla", "Pecho", "Cintura", "Cadera"],
+    rows: [
+      ["XS", "82-86", "64-68", "88-92"],
+      ["S", "87-91", "69-73", "93-97"],
+      ["M", "92-97", "74-79", "98-103"],
+      ["L", "98-103", "80-85", "104-109"],
+      ["XL", "104-110", "86-92", "110-116"],
+      ["XXL", "111-117", "93-99", "117-123"],
+    ],
+  },
+  ninos: {
+    title: "Ropa infantil",
+    head: ["Talla", "Edad", "Estatura (cm)"],
+    rows: [
+      ["2A", "2 años", "88-94"], ["4A", "4 años", "100-106"],
+      ["6A", "6 años", "112-118"], ["8A", "8 años", "124-130"],
+      ["10A", "10 años", "136-142"], ["12A", "12 años", "148-154"],
+    ],
+  },
+  calzado: {
+    title: "Calzado (cm de plantilla)",
+    head: ["Talla", "Longitud"],
+    rows: [
+      ["35", "22.5"], ["36", "23.0"], ["37", "23.5"], ["38", "24.5"],
+      ["39", "25.0"], ["40", "25.5"], ["41", "26.5"], ["42", "27.0"], ["43", "27.5"],
+    ],
+  },
+};
